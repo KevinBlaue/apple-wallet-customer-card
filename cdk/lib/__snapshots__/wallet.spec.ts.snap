@@ -1,0 +1,885 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`WalletStack synthesizes a small, least-privilege serverless architecture 1`] = `
+{
+  "Resources": {
+    "CardsB3AD5C31": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          }
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "DeletionProtectionEnabled": false,
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH"
+          }
+        ],
+        "PointInTimeRecoverySpecification": {
+          "PointInTimeRecoveryEnabled": false
+        },
+        "Tags": [
+          {
+            "Key": "environment",
+            "Value": "dev"
+          },
+          {
+            "Key": "lifecycle",
+            "Value": "ephemeral"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "aws-cdk"
+          },
+          {
+            "Key": "project",
+            "Value": "apple-wallet-customer-card"
+          }
+        ],
+        "TimeToLiveSpecification": {
+          "AttributeName": "expiresAt",
+          "Enabled": true
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "WalletFunctionLogs972EFDBB": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/dev-wallet-wallet",
+        "RetentionInDays": 7,
+        "Tags": [
+          {
+            "Key": "environment",
+            "Value": "dev"
+          },
+          {
+            "Key": "lifecycle",
+            "Value": "ephemeral"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "aws-cdk"
+          },
+          {
+            "Key": "project",
+            "Value": "apple-wallet-customer-card"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "WalletFunctionServiceRole28335DCF": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "environment",
+            "Value": "dev"
+          },
+          {
+            "Key": "lifecycle",
+            "Value": "ephemeral"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "aws-cdk"
+          },
+          {
+            "Key": "project",
+            "Value": "apple-wallet-customer-card"
+          }
+        ]
+      }
+    },
+    "WalletFunctionServiceRoleDefaultPolicy4A77C030": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords"
+              ],
+              "Effect": "Allow",
+              "Resource": "*"
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "CardsB3AD5C31",
+                    "Arn"
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "CardsB3AD5C31",
+                    "Arn"
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:DescribeSecret"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":secretsmanager:eu-central-1:111111111111:secret:/apple-wallet-customer-card/dev/certificates-??????"
+                  ]
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "WalletFunctionServiceRoleDefaultPolicy4A77C030",
+        "Roles": [
+          {
+            "Ref": "WalletFunctionServiceRole28335DCF"
+          }
+        ]
+      }
+    },
+    "WalletFunctionC0E412DB": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Architectures": [
+          "arm64"
+        ],
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-111111111111-eu-central-1",
+          "S3Key": "[ASSET_HASH].zip"
+        },
+        "Environment": {
+          "Variables": {
+            "CARDS_TABLE_NAME": {
+              "Ref": "CardsB3AD5C31"
+            },
+            "CERTIFICATE_SECRET_NAME": "/apple-wallet-customer-card/dev/certificates",
+            "CARD_TTL_DAYS": "7",
+            "SECRETS_EXTENSION_URL": "http://localhost:2773/secretsmanager/get",
+            "SECRETS_MANAGER_TTL": "300"
+          }
+        },
+        "FunctionName": "dev-wallet-wallet",
+        "Handler": "index.handler",
+        "Layers": [
+          {
+            "Ref": "SsmParameterValueawsserviceawsparametersandsecretslambdaextensionarm64latestC96584B6F00A464EAD1953AFF4B05118Parameter"
+          }
+        ],
+        "LoggingConfig": {
+          "ApplicationLogLevel": "DEBUG",
+          "LogFormat": "JSON",
+          "LogGroup": {
+            "Ref": "WalletFunctionLogs972EFDBB"
+          },
+          "SystemLogLevel": "WARN"
+        },
+        "MemorySize": 512,
+        "Role": {
+          "Fn::GetAtt": [
+            "WalletFunctionServiceRole28335DCF",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs24.x",
+        "Tags": [
+          {
+            "Key": "environment",
+            "Value": "dev"
+          },
+          {
+            "Key": "lifecycle",
+            "Value": "ephemeral"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "aws-cdk"
+          },
+          {
+            "Key": "project",
+            "Value": "apple-wallet-customer-card"
+          }
+        ],
+        "Timeout": 15,
+        "TracingConfig": {
+          "Mode": "Active"
+        }
+      },
+      "DependsOn": [
+        "WalletFunctionServiceRoleDefaultPolicy4A77C030",
+        "WalletFunctionServiceRole28335DCF"
+      ]
+    },
+    "ApiGatewayInvokeRoleF33A95EC": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "apigateway.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "Tags": [
+          {
+            "Key": "environment",
+            "Value": "dev"
+          },
+          {
+            "Key": "lifecycle",
+            "Value": "ephemeral"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "aws-cdk"
+          },
+          {
+            "Key": "project",
+            "Value": "apple-wallet-customer-card"
+          }
+        ]
+      }
+    },
+    "ApiGatewayInvokeRoleDefaultPolicy22BA4EF9": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "WalletFunctionC0E412DB",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "ApiGatewayInvokeRoleDefaultPolicy22BA4EF9",
+        "Roles": [
+          {
+            "Ref": "ApiGatewayInvokeRoleF33A95EC"
+          }
+        ]
+      }
+    },
+    "ApiAccessLogsE9DF007D": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "RetentionInDays": 7,
+        "Tags": [
+          {
+            "Key": "environment",
+            "Value": "dev"
+          },
+          {
+            "Key": "lifecycle",
+            "Value": "ephemeral"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "aws-cdk"
+          },
+          {
+            "Key": "project",
+            "Value": "apple-wallet-customer-card"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete"
+    },
+    "WalletApiBCC8C2A0": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "BinaryMediaTypes": [
+          "application/vnd.apple.pkpass"
+        ],
+        "Body": {
+          "openapi": "3.0.3",
+          "info": {
+            "title": "Apple Wallet Customer Card API",
+            "version": "1.0.0",
+            "description": "Creates short-lived demo customer cards and returns signed Apple Wallet passes."
+          },
+          "x-amazon-apigateway-binary-media-types": [
+            "application/vnd.apple.pkpass"
+          ],
+          "paths": {
+            "/cards": {
+              "post": {
+                "operationId": "createCard",
+                "summary": "Create a customer card",
+                "requestBody": {
+                  "required": true,
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/CreateCardRequest"
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "201": {
+                    "description": "Card created",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "$ref": "#/components/schemas/Card"
+                        }
+                      }
+                    }
+                  },
+                  "400": {
+                    "$ref": "#/components/responses/BadRequest"
+                  },
+                  "422": {
+                    "$ref": "#/components/responses/UnprocessableEntity"
+                  },
+                  "500": {
+                    "$ref": "#/components/responses/InternalServerError"
+                  }
+                },
+                "x-amazon-apigateway-request-validator": "all",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "credentials": {
+                    "Fn::GetAtt": [
+                      "ApiGatewayInvokeRoleF33A95EC",
+                      "Arn"
+                    ]
+                  },
+                  "uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:eu-central-1::lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "WalletFunctionC0E412DB",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                }
+              }
+            },
+            "/cards/{cardId}/pass": {
+              "get": {
+                "operationId": "downloadPass",
+                "summary": "Download a signed Apple Wallet pass",
+                "parameters": [
+                  {
+                    "name": "cardId",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                      "type": "string",
+                      "format": "uuid"
+                    }
+                  }
+                ],
+                "responses": {
+                  "200": {
+                    "description": "Signed Apple Wallet pass",
+                    "headers": {
+                      "Content-Disposition": {
+                        "schema": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "content": {
+                      "application/vnd.apple.pkpass": {
+                        "schema": {
+                          "type": "string",
+                          "format": "binary"
+                        }
+                      }
+                    }
+                  },
+                  "400": {
+                    "$ref": "#/components/responses/BadRequest"
+                  },
+                  "404": {
+                    "$ref": "#/components/responses/NotFound"
+                  },
+                  "500": {
+                    "$ref": "#/components/responses/InternalServerError"
+                  }
+                },
+                "x-amazon-apigateway-request-validator": "all",
+                "x-amazon-apigateway-integration": {
+                  "type": "aws_proxy",
+                  "httpMethod": "POST",
+                  "credentials": {
+                    "Fn::GetAtt": [
+                      "ApiGatewayInvokeRoleF33A95EC",
+                      "Arn"
+                    ]
+                  },
+                  "uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:eu-central-1::lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "WalletFunctionC0E412DB",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "components": {
+            "schemas": {
+              "CreateCardRequest": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  }
+                }
+              },
+              "Card": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "name",
+                  "passUrl",
+                  "createdAt"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "passUrl": {
+                    "type": "string"
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              },
+              "Error": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "code",
+                  "message"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "responses": {
+              "BadRequest": {
+                "description": "The request could not be parsed",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Error"
+                    }
+                  }
+                }
+              },
+              "UnprocessableEntity": {
+                "description": "The request is syntactically valid but contains invalid values",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Error"
+                    }
+                  }
+                }
+              },
+              "NotFound": {
+                "description": "The card does not exist",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Error"
+                    }
+                  }
+                }
+              },
+              "InternalServerError": {
+                "description": "The request failed unexpectedly",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "x-amazon-apigateway-request-validators": {
+            "all": {
+              "validateRequestBody": true,
+              "validateRequestParameters": true
+            }
+          }
+        },
+        "EndpointConfiguration": {
+          "Types": [
+            "REGIONAL"
+          ]
+        },
+        "Name": "WalletApi",
+        "Tags": [
+          {
+            "Key": "environment",
+            "Value": "dev"
+          },
+          {
+            "Key": "lifecycle",
+            "Value": "ephemeral"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "aws-cdk"
+          },
+          {
+            "Key": "project",
+            "Value": "apple-wallet-customer-card"
+          }
+        ]
+      }
+    },
+    "WalletApiCloudWatchRoleB8557862": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "apigateway.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+              ]
+            ]
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "environment",
+            "Value": "dev"
+          },
+          {
+            "Key": "lifecycle",
+            "Value": "ephemeral"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "aws-cdk"
+          },
+          {
+            "Key": "project",
+            "Value": "apple-wallet-customer-card"
+          }
+        ]
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "WalletApiAccount14EB181E": {
+      "Type": "AWS::ApiGateway::Account",
+      "Properties": {
+        "CloudWatchRoleArn": {
+          "Fn::GetAtt": [
+            "WalletApiCloudWatchRoleB8557862",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "WalletApiBCC8C2A0"
+      ],
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain"
+    },
+    "WalletApiDeploymentE98440EBae3c63e746eb790e0599093cab5027de": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "Description": "Automatically created by the RestApi construct",
+        "RestApiId": {
+          "Ref": "WalletApiBCC8C2A0"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:do-not-refactor": true
+      }
+    },
+    "WalletApiDeploymentStagev19458FD57": {
+      "Type": "AWS::ApiGateway::Stage",
+      "Properties": {
+        "AccessLogSetting": {
+          "DestinationArn": {
+            "Fn::GetAtt": [
+              "ApiAccessLogsE9DF007D",
+              "Arn"
+            ]
+          },
+          "Format": "{\\"requestId\\":\\"$context.requestId\\",\\"ip\\":\\"$context.identity.sourceIp\\",\\"requestTime\\":\\"$context.requestTime\\",\\"httpMethod\\":\\"$context.httpMethod\\",\\"resourcePath\\":\\"$context.resourcePath\\",\\"status\\":\\"$context.status\\",\\"protocol\\":\\"$context.protocol\\",\\"responseLength\\":\\"$context.responseLength\\"}"
+        },
+        "DeploymentId": {
+          "Ref": "WalletApiDeploymentE98440EBae3c63e746eb790e0599093cab5027de"
+        },
+        "MethodSettings": [
+          {
+            "DataTraceEnabled": false,
+            "HttpMethod": "*",
+            "LoggingLevel": "INFO",
+            "MetricsEnabled": true,
+            "ResourcePath": "/*",
+            "ThrottlingBurstLimit": 5,
+            "ThrottlingRateLimit": 2
+          }
+        ],
+        "RestApiId": {
+          "Ref": "WalletApiBCC8C2A0"
+        },
+        "StageName": "v1",
+        "Tags": [
+          {
+            "Key": "environment",
+            "Value": "dev"
+          },
+          {
+            "Key": "lifecycle",
+            "Value": "ephemeral"
+          },
+          {
+            "Key": "managed-by",
+            "Value": "aws-cdk"
+          },
+          {
+            "Key": "project",
+            "Value": "apple-wallet-customer-card"
+          }
+        ]
+      },
+      "DependsOn": [
+        "WalletApiAccount14EB181E"
+      ]
+    }
+  },
+  "Parameters": {
+    "SsmParameterValueawsserviceawsparametersandsecretslambdaextensionarm64latestC96584B6F00A464EAD1953AFF4B05118Parameter": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/aws/service/aws-parameters-and-secrets-lambda-extension/arm64/latest"
+    },
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Outputs": {
+    "WalletApiEndpointDBBC05FB": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "WalletApiBCC8C2A0"
+            },
+            ".execute-api.eu-central-1.",
+            {
+              "Ref": "AWS::URLSuffix"
+            },
+            "/",
+            {
+              "Ref": "WalletApiDeploymentStagev19458FD57"
+            },
+            "/"
+          ]
+        ]
+      }
+    },
+    "ApiUrl": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "WalletApiBCC8C2A0"
+            },
+            ".execute-api.eu-central-1.",
+            {
+              "Ref": "AWS::URLSuffix"
+            },
+            "/",
+            {
+              "Ref": "WalletApiDeploymentStagev19458FD57"
+            },
+            "/"
+          ]
+        ]
+      }
+    },
+    "CertificateSecretName": {
+      "Value": "/apple-wallet-customer-card/dev/certificates"
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}
+`;

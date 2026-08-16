@@ -1,0 +1,21 @@
+{
+  "name": "@work-probes/apple-wallet-customer-card-lambda",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "node build.cjs",
+    "lint": "eslint . --ext .ts,.cjs",
+    "test": "jest --config jest.config.cjs --runInBand",
+    "test:update": "jest --config jest.config.cjs --runInBand --updateSnapshot"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "3.1111.0",
+    "@aws-sdk/lib-dynamodb": "3.1111.0",
+    "passkit-generator": "3.5.7",
+    "pngjs": "7.0.0"
+  },
+  "devDependencies": {
+    "@types/pngjs": "6.0.5",
+    "esbuild": "0.25.11"
+  }
+}

@@ -1,0 +1,5 @@
+defaultRegion: eu-central-1
+projectName: apple-wallet-customer-card
+resourceTags:
+  project: apple-wallet-customer-card
+  managed-by: aws-cdk

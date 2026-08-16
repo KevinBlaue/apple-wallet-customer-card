@@ -1,0 +1,48 @@
+{
+  "name": "apple-wallet-customer-card",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A contract-first AWS working probe for issuing Apple Wallet customer cards.",
+  "workspaces": [
+    "canary",
+    "cdk",
+    "src/lambda-functions/*"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "npm@12.0.2",
+  "scripts": {
+    "build": "turbo run build",
+    "canary:build": "turbo run build --filter=@work-probes/apple-wallet-canary",
+    "cdk": "npm run cdk --workspace @work-probes/apple-wallet-cdk --",
+    "check": "npm run format && npm run lint && npm run build && npm test && npm run test:coverage && npm run synth",
+    "deploy": "turbo run deploy --filter=@work-probes/apple-wallet-cdk",
+    "destroy": "turbo run destroy --filter=@work-probes/apple-wallet-cdk",
+    "diff": "turbo run diff --filter=@work-probes/apple-wallet-cdk",
+    "format": "prettier --check .",
+    "format:write": "prettier --write .",
+    "lint": "eslint contract .eslintrc.cjs jest.config.cjs --ext .ts,.cjs --no-error-on-unmatched-pattern && turbo run lint",
+    "synth": "turbo run synth --filter=@work-probes/apple-wallet-cdk",
+    "test": "turbo run test",
+    "test:coverage": "npm run canary:build && jest --coverage --runInBand",
+    "test:update": "turbo run test:update"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.156",
+    "@types/jest": "30.0.0",
+    "@types/node": "24.8.1",
+    "@typescript-eslint/eslint-plugin": "8.46.1",
+    "@typescript-eslint/parser": "8.46.1",
+    "eslint": "8.57.1",
+    "eslint-config-prettier": "10.1.8",
+    "jest": "30.2.0",
+    "prettier": "3.6.2",
+    "ts-jest": "29.4.5",
+    "turbo": "2.5.8",
+    "typescript": "5.9.3"
+  },
+  "overrides": {
+    "joi": "17.13.4"
+  }
+}

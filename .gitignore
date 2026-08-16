@@ -1,0 +1,19 @@
+node_modules/
+/cdk.out/
+/cdk/cdk.out/
+coverage/
+**/dist/
+.turbo/
+.env
+.env.*
+*.log
+.DS_Store
+
+# Apple certificates and private keys must never be committed.
+certificates/*
+!certificates/.gitkeep
+*.cer
+*.key
+*.p12
+*.pem
+*.pfx

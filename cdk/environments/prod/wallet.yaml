@@ -1,0 +1,8 @@
+applicationLogLevel: INFO
+cardTtlDays: 30
+certificateSecretName: /apple-wallet-customer-card/prod/certificates
+deletionProtection: true
+logRetentionDays: 30
+minify: true
+pointInTimeRecovery: true
+removalPolicy: retain

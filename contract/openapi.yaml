@@ -1,0 +1,151 @@
+openapi: 3.0.3
+info:
+  title: Apple Wallet Customer Card API
+  version: 1.0.0
+  description: Creates short-lived demo customer cards and returns signed Apple Wallet passes.
+
+x-amazon-apigateway-binary-media-types:
+  - application/vnd.apple.pkpass
+
+paths:
+  /cards:
+    post:
+      operationId: createCard
+      summary: Create a customer card
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCardRequest'
+      responses:
+        '201':
+          description: Card created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Card'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      x-amazon-apigateway-request-validator: all
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        credentials: ${ApiGatewayRoleArn}
+        uri: ${WalletFunctionUri}
+
+  /cards/{cardId}/pass:
+    get:
+      operationId: downloadPass
+      summary: Download a signed Apple Wallet pass
+      parameters:
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Signed Apple Wallet pass
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+          content:
+            application/vnd.apple.pkpass:
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      x-amazon-apigateway-request-validator: all
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: POST
+        credentials: ${ApiGatewayRoleArn}
+        uri: ${WalletFunctionUri}
+
+components:
+  schemas:
+    CreateCardRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+
+    Card:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - name
+        - passUrl
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        passUrl:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      additionalProperties: false
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+
+  responses:
+    BadRequest:
+      description: The request could not be parsed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UnprocessableEntity:
+      description: The request is syntactically valid but contains invalid values
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The card does not exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description: The request failed unexpectedly
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+x-amazon-apigateway-request-validators:
+  all:
+    validateRequestBody: true
+    validateRequestParameters: true

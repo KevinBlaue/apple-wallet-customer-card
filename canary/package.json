@@ -1,0 +1,14 @@
+{
+  "name": "@work-probes/apple-wallet-canary",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "node build.cjs",
+    "lint": "eslint . --ext .ts,.cjs",
+    "test": "jest --config jest.config.cjs --runInBand",
+    "test:update": "jest --config jest.config.cjs --runInBand --updateSnapshot"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.11"
+  }
+}

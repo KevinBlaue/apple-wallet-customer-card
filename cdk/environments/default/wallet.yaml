@@ -1,0 +1,13 @@
+apiStageName: v1
+applicationLogLevel: INFO
+canaryEnabled: false
+cardTtlDays: 7
+deletionProtection: false
+logRetentionDays: 7
+minify: false
+pointInTimeRecovery: false
+removalPolicy: destroy
+secretsCacheTtlSeconds: 300
+secretsExtensionLayerParameterName: /aws/service/aws-parameters-and-secrets-lambda-extension/arm64/latest
+throttlingBurstLimit: 5
+throttlingRateLimit: 2
