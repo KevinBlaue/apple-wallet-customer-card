@@ -10,7 +10,7 @@ import {
   Tracing,
 } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
+import type { ITable } from 'aws-cdk-lib/aws-dynamodb';
 import { Effect, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import {
   AccessLogFormat,
@@ -42,26 +42,19 @@ type OpenApiDocument = Record<string, unknown> & {
   paths: Record<string, Record<string, Record<string, unknown>>>;
 };
 
-export class WalletStack extends BaseStack {
-  constructor(app: App, id: string, props?: StackProps) {
+export interface WalletApiStackProps extends StackProps {
+  readonly cardsTable: ITable;
+}
+
+export class WalletApiStack extends BaseStack {
+  constructor(app: App, id: string, props: WalletApiStackProps) {
     super(app, id, props);
 
     const removalPolicy = this.removalPolicy();
-    const cards = new Table(this, 'Cards', {
-      partitionKey: { name: 'id', type: AttributeType.STRING },
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      deletionProtection: this.booleanValue('deletionProtection'),
-      pointInTimeRecoverySpecification: {
-        pointInTimeRecoveryEnabled: this.booleanValue('pointInTimeRecovery'),
-      },
-      removalPolicy,
-      timeToLiveAttribute: 'expiresAt',
-    });
-
     const certificateSecret = Secret.fromSecretNameV2(
       this,
       'AppleCertificates',
-      this.stringValue('certificateSecretName')
+      this.stringValue('certificateSecretName').replace('{environment}', this.environmentName)
     );
 
     const functionLogGroup = new LogGroup(this, 'WalletFunctionLogs', {
@@ -107,14 +100,14 @@ export class WalletStack extends BaseStack {
         target: 'node24',
       },
       environment: {
-        CARDS_TABLE_NAME: cards.tableName,
+        CARDS_TABLE_NAME: props.cardsTable.tableName,
         CERTIFICATE_SECRET_NAME: certificateSecret.secretName,
         CARD_TTL_DAYS: String(this.numberValue('cardTtlDays')),
         SECRETS_EXTENSION_URL: 'http://localhost:2773/secretsmanager/get',
         SECRETS_MANAGER_TTL: String(this.numberValue('secretsCacheTtlSeconds')),
       },
     });
-    cards.grantReadWriteData(walletFunction);
+    props.cardsTable.grantReadWriteData(walletFunction);
     certificateSecret.grantRead(walletFunction);
 
     const apiRole = new Role(this, 'ApiGatewayInvokeRole', {

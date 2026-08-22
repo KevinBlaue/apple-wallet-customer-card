@@ -1,0 +1,5 @@
+applicationLogLevel: INFO
+cardTtlDays: 30
+logRetentionDays: 30
+minify: true
+removalPolicy: retain

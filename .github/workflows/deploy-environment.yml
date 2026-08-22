@@ -1,0 +1,35 @@
+name: Deploy QA or production
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Persistent environment to deploy
+        required: true
+        type: choice
+        options:
+          - qa
+          - prod
+
+jobs:
+  deploy-qa:
+    if: ${{ inputs.environment == 'qa' && vars.AWS_QA_DEPLOY_ROLE_ARN != '' }}
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      aws_region: ${{ vars.AWS_REGION || 'eu-central-1' }}
+      deploy_role_arn: ${{ vars.AWS_QA_DEPLOY_ROLE_ARN }}
+      environment: qa
+
+  deploy-prod:
+    if: ${{ inputs.environment == 'prod' && vars.AWS_PROD_DEPLOY_ROLE_ARN != '' }}
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      aws_region: ${{ vars.AWS_REGION || 'eu-central-1' }}
+      deploy_role_arn: ${{ vars.AWS_PROD_DEPLOY_ROLE_ARN }}
+      environment: prod

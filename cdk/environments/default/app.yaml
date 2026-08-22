@@ -1,5 +1,7 @@
 defaultRegion: eu-central-1
+iamGitHubEnabled: false
 projectName: apple-wallet-customer-card
 resourceTags:
   project: apple-wallet-customer-card
   managed-by: aws-cdk
+  data-classification: synthetic

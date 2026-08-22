@@ -1,23 +1,23 @@
-name: Reusable deployment
+name: Reusable destroy
 
 on:
   workflow_call:
     inputs:
       aws_region:
-        description: AWS region used for the deployment
+        description: AWS region containing the environment
         required: true
         type: string
       deploy_role_arn:
-        description: GitHub OIDC role assumed for the deployment
+        description: GitHub OIDC role assumed for cleanup
         required: true
         type: string
       environment:
-        description: Environment used as the namespace for every deployed stack
+        description: Environment namespace to destroy
         required: true
         type: string
 
 jobs:
-  deploy:
+  destroy:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -36,18 +36,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run quality gate
-        run: npm run check
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6.2.3
         with:
           aws-region: ${{ inputs.aws_region }}
           role-to-assume: ${{ inputs.deploy_role_arn }}
 
-      - name: Deploy
+      - name: Destroy environment stacks
         run: >-
-          npm run cdk -- deploy --all
+          npm run cdk -- destroy
           -c environment=${{ inputs.environment }}
-          --require-approval never
-          --concurrency 3
+          "${{ inputs.environment }}-*"
+          --force
