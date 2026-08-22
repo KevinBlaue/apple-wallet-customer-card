@@ -4,18 +4,25 @@ import { deepMerge, loadEnvironmentConfiguration } from './config';
 describe('environment configuration', () => {
   test('merges defaults with the selected environment', () => {
     const directory = join(__dirname, '..', '..', 'environments');
-    expect(loadEnvironmentConfiguration(directory, 'dev', 'wallet')).toMatchObject({
+    expect(loadEnvironmentConfiguration(directory, 'dev', 'walletApi')).toMatchObject({
       apiStageName: 'v1',
       applicationLogLevel: 'DEBUG',
       cardTtlDays: 7,
-      certificateSecretName: '/apple-wallet-customer-card/dev/certificates',
+      certificateSecretName: '/apple-wallet-customer-card/{environment}/certificates',
       removalPolicy: 'destroy',
     });
-    expect(loadEnvironmentConfiguration(directory, 'prod', 'wallet')).toMatchObject({
+    expect(loadEnvironmentConfiguration(directory, 'prod', 'walletApi')).toMatchObject({
       applicationLogLevel: 'INFO',
       cardTtlDays: 30,
-      deletionProtection: true,
       removalPolicy: 'retain',
+    });
+  });
+
+  test('uses defaults when a dynamic environment has no override directory', () => {
+    const directory = join(__dirname, '..', '..', 'environments');
+    expect(loadEnvironmentConfiguration(directory, 'pr-123', 'database')).toMatchObject({
+      removalPolicy: 'destroy',
+      seedDemoData: true,
     });
   });
 

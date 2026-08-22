@@ -1,60 +1,18 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`WalletStack synthesizes a small, least-privilege serverless architecture 1`] = `
+exports[`WalletApiStack synthesizes a small, least-privilege serverless architecture 1`] = `
 {
   "Resources": {
-    "CardsB3AD5C31": {
-      "Type": "AWS::DynamoDB::Table",
-      "Properties": {
-        "AttributeDefinitions": [
-          {
-            "AttributeName": "id",
-            "AttributeType": "S"
-          }
-        ],
-        "BillingMode": "PAY_PER_REQUEST",
-        "DeletionProtectionEnabled": false,
-        "KeySchema": [
-          {
-            "AttributeName": "id",
-            "KeyType": "HASH"
-          }
-        ],
-        "PointInTimeRecoverySpecification": {
-          "PointInTimeRecoveryEnabled": false
-        },
-        "Tags": [
-          {
-            "Key": "environment",
-            "Value": "dev"
-          },
-          {
-            "Key": "lifecycle",
-            "Value": "ephemeral"
-          },
-          {
-            "Key": "managed-by",
-            "Value": "aws-cdk"
-          },
-          {
-            "Key": "project",
-            "Value": "apple-wallet-customer-card"
-          }
-        ],
-        "TimeToLiveSpecification": {
-          "AttributeName": "expiresAt",
-          "Enabled": true
-        }
-      },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete"
-    },
     "WalletFunctionLogs972EFDBB": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/dev-wallet-wallet",
+        "LogGroupName": "/aws/lambda/dev-walletApi-wallet",
         "RetentionInDays": 7,
         "Tags": [
+          {
+            "Key": "data-classification",
+            "Value": "synthetic"
+          },
           {
             "Key": "environment",
             "Value": "dev"
@@ -107,6 +65,10 @@ exports[`WalletStack synthesizes a small, least-privilege serverless architectur
         ],
         "Tags": [
           {
+            "Key": "data-classification",
+            "Value": "synthetic"
+          },
+          {
             "Key": "environment",
             "Value": "dev"
           },
@@ -154,10 +116,7 @@ exports[`WalletStack synthesizes a small, least-privilege serverless architectur
               "Effect": "Allow",
               "Resource": [
                 {
-                  "Fn::GetAtt": [
-                    "CardsB3AD5C31",
-                    "Arn"
-                  ]
+                  "Fn::ImportValue": "dev-database:ExportsOutputFnGetAttCardsB3AD5C31ArnDC9E538A"
                 }
               ]
             },
@@ -169,10 +128,7 @@ exports[`WalletStack synthesizes a small, least-privilege serverless architectur
               "Effect": "Allow",
               "Resource": [
                 {
-                  "Fn::GetAtt": [
-                    "CardsB3AD5C31",
-                    "Arn"
-                  ]
+                  "Fn::ImportValue": "dev-database:ExportsOutputFnGetAttCardsB3AD5C31ArnDC9E538A"
                 }
               ]
             },
@@ -219,7 +175,7 @@ exports[`WalletStack synthesizes a small, least-privilege serverless architectur
         "Environment": {
           "Variables": {
             "CARDS_TABLE_NAME": {
-              "Ref": "CardsB3AD5C31"
+              "Fn::ImportValue": "dev-database:ExportsOutputRefCardsB3AD5C31E6E41F12"
             },
             "CERTIFICATE_SECRET_NAME": "/apple-wallet-customer-card/dev/certificates",
             "CARD_TTL_DAYS": "7",
@@ -227,7 +183,7 @@ exports[`WalletStack synthesizes a small, least-privilege serverless architectur
             "SECRETS_MANAGER_TTL": "300"
           }
         },
-        "FunctionName": "dev-wallet-wallet",
+        "FunctionName": "dev-walletApi-wallet",
         "Handler": "index.handler",
         "Layers": [
           {
@@ -251,6 +207,10 @@ exports[`WalletStack synthesizes a small, least-privilege serverless architectur
         },
         "Runtime": "nodejs24.x",
         "Tags": [
+          {
+            "Key": "data-classification",
+            "Value": "synthetic"
+          },
           {
             "Key": "environment",
             "Value": "dev"
@@ -294,6 +254,10 @@ exports[`WalletStack synthesizes a small, least-privilege serverless architectur
           "Version": "2012-10-17"
         },
         "Tags": [
+          {
+            "Key": "data-classification",
+            "Value": "synthetic"
+          },
           {
             "Key": "environment",
             "Value": "dev"
@@ -344,6 +308,10 @@ exports[`WalletStack synthesizes a small, least-privilege serverless architectur
       "Properties": {
         "RetentionInDays": 7,
         "Tags": [
+          {
+            "Key": "data-classification",
+            "Value": "synthetic"
+          },
           {
             "Key": "environment",
             "Value": "dev"
@@ -643,6 +611,10 @@ exports[`WalletStack synthesizes a small, least-privilege serverless architectur
         "Name": "WalletApi",
         "Tags": [
           {
+            "Key": "data-classification",
+            "Value": "synthetic"
+          },
+          {
             "Key": "environment",
             "Value": "dev"
           },
@@ -692,6 +664,10 @@ exports[`WalletStack synthesizes a small, least-privilege serverless architectur
         ],
         "Tags": [
           {
+            "Key": "data-classification",
+            "Value": "synthetic"
+          },
+          {
             "Key": "environment",
             "Value": "dev"
           },
@@ -728,7 +704,7 @@ exports[`WalletStack synthesizes a small, least-privilege serverless architectur
       "UpdateReplacePolicy": "Retain",
       "DeletionPolicy": "Retain"
     },
-    "WalletApiDeploymentE98440EBae3c63e746eb790e0599093cab5027de": {
+    "WalletApiDeploymentE98440EB049caf97baab66c3b5125ffabe1c2656": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "Description": "Automatically created by the RestApi construct",
@@ -753,7 +729,7 @@ exports[`WalletStack synthesizes a small, least-privilege serverless architectur
           "Format": "{\\"requestId\\":\\"$context.requestId\\",\\"ip\\":\\"$context.identity.sourceIp\\",\\"requestTime\\":\\"$context.requestTime\\",\\"httpMethod\\":\\"$context.httpMethod\\",\\"resourcePath\\":\\"$context.resourcePath\\",\\"status\\":\\"$context.status\\",\\"protocol\\":\\"$context.protocol\\",\\"responseLength\\":\\"$context.responseLength\\"}"
         },
         "DeploymentId": {
-          "Ref": "WalletApiDeploymentE98440EBae3c63e746eb790e0599093cab5027de"
+          "Ref": "WalletApiDeploymentE98440EB049caf97baab66c3b5125ffabe1c2656"
         },
         "MethodSettings": [
           {
@@ -771,6 +747,10 @@ exports[`WalletStack synthesizes a small, least-privilege serverless architectur
         },
         "StageName": "v1",
         "Tags": [
+          {
+            "Key": "data-classification",
+            "Value": "synthetic"
+          },
           {
             "Key": "environment",
             "Value": "dev"

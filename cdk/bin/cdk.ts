@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { App } from '../lib/constructs/app';
-import { WalletStack } from '../lib/wallet';
+import { createStacks } from '../lib/stacks';
 
 const app = new App();
-new WalletStack(app, 'wallet');
+createStacks(app);

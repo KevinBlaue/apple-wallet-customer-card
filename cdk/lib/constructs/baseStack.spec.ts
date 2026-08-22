@@ -5,7 +5,7 @@ import { BaseStack } from './baseStack';
 
 class InspectableStack extends BaseStack {
   constructor(app: App) {
-    super(app, 'wallet');
+    super(app, 'walletApi');
   }
 
   inspect(): void {

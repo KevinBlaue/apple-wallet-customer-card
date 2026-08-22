@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { load } from 'js-yaml';
 
@@ -10,7 +10,8 @@ export function loadEnvironmentConfiguration(
   configurationName: string
 ): Configuration {
   const defaults = readYaml(join(environmentsDirectory, 'default', `${configurationName}.yaml`));
-  const override = readYaml(join(environmentsDirectory, environment, `${configurationName}.yaml`));
+  const overridePath = join(environmentsDirectory, environment, `${configurationName}.yaml`);
+  const override = existsSync(overridePath) ? readYaml(overridePath) : {};
   return deepMerge(defaults, override);
 }
 

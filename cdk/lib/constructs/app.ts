@@ -31,6 +31,14 @@ export class App extends CdkApp {
     };
   }
 
+  get iamGitHubEnabled(): boolean {
+    const value = this.config.iamGitHubEnabled;
+    if (typeof value !== 'boolean') {
+      throw new Error('Configuration value iamGitHubEnabled must be a boolean');
+    }
+    return value;
+  }
+
   get resourceTags(): Readonly<Record<string, string>> {
     const tags = this.config.resourceTags;
     if (!isRecord(tags)) throw new Error('Configuration value resourceTags must be an object');

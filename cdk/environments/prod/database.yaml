@@ -1,0 +1,4 @@
+deletionProtection: true
+pointInTimeRecovery: true
+removalPolicy: retain
+seedDemoData: false

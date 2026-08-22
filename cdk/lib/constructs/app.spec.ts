@@ -9,7 +9,20 @@ describe('App', () => {
     expect(app.resourceTags).toEqual({
       project: 'apple-wallet-customer-card',
       'managed-by': 'aws-cdk',
+      'data-classification': 'synthetic',
       lifecycle: 'ephemeral',
+    });
+    expect(app.iamGitHubEnabled).toBe(true);
+  });
+
+  test('uses defaults for a dynamic pull-request environment', () => {
+    const app = new App({ context: { environment: 'pr-123' } });
+    expect(app.environmentName).toBe('pr-123');
+    expect(app.iamGitHubEnabled).toBe(false);
+    expect(app.resourceTags).toEqual({
+      project: 'apple-wallet-customer-card',
+      'managed-by': 'aws-cdk',
+      'data-classification': 'synthetic',
     });
   });
 
